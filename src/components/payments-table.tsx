@@ -1,44 +1,66 @@
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
-import { Payment } from "@/types/payment"
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Payment } from "@/types/payment";
+import { format } from "date-fns";
 
 interface Props {
-    data: Payment[]
+  data: Payment[];
+  loading: boolean;
+  error: string;
 }
 
-export function PaymentsTable({ data }: Props) {
-    return <Table>
-        <TableHeader>
-            <TableRow>
-                <TableHead className="w-[100px]">ID</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
-            </TableRow>
-        </TableHeader>
-        <TableBody>
-            <>
-                {data.map(item => (
-                    <TableRow key={item.id}>
-                        <TableCell className="font-medium">{item.id}</TableCell>
-                        <TableCell>{item.date}</TableCell>
-                        <TableCell>{item.description}</TableCell>
-                        <TableCell className="text-right">${item.amount}</TableCell>
-                    </TableRow>
-                ))}
+export function PaymentsTable({ data, loading, error }: Props) {
+  const formatDate = (date: Date): string => {
+    try {
+      return format(new Date(date), "yyyy-MM-dd");
+    } catch {
+      return "Invalid date";
+    }
+  };
 
-                {data.length === 0 && (
-                    <TableRow>
-                        <TableCell className="font-medium">No results</TableCell>
-                    </TableRow>
-                )}
-            </>
-        </TableBody>
+  const renderMessage = (message: string) => (
+    <TableRow>
+      <TableCell className="font-medium text-center" colSpan={4}>
+        {message}
+      </TableCell>
+    </TableRow>
+  );
+
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead className="w-[100px]">ID</TableHead>
+          <TableHead>Date</TableHead>
+          <TableHead>Description</TableHead>
+          <TableHead className="text-right">Amount (USD)</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {loading && renderMessage("Loading...")}
+
+        {!loading && error && renderMessage(error)}
+
+        {!loading && !error && data.length === 0 && renderMessage("No results")}
+
+        {!loading &&
+          !error &&
+          data.length > 0 &&
+          data.map(({ id, date, description, amount }) => (
+            <TableRow key={id}>
+              <TableCell className="font-medium">{id}</TableCell>
+              <TableCell>{formatDate(date)}</TableCell>
+              <TableCell>{description}</TableCell>
+              <TableCell className="text-right">${amount}</TableCell>
+            </TableRow>
+          ))}
+      </TableBody>
     </Table>
+  );
 }

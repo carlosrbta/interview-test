@@ -1,22 +1,38 @@
 import { Payment } from "@/types/payment";
+import { faker } from "@faker-js/faker";
+
+export const generateFakePayments = (count: number): Payment[] => {
+  const payments: Payment[] = [];
+
+  for (let i = 1; i <= count; i++) {
+    payments.push({
+      id: i,
+      description: faker.commerce.productDescription(),
+      date: new Date(),
+      amount: parseFloat(faker.commerce.price()),
+    });
+  }
+
+  return payments;
+};
+
+const payments: Payment[] = generateFakePayments(10);
 
 export function getPayments(date?: Date) {
+  const y = Math.random();
 
-    const data: Payment[] = [
-        { "id": 1, "description": "Description 1", "date": "2024-11-25", "amount": 100 },
-        { "id": 2, "description": "Description 2", "date": "2024-11-25", "amount": 200 }
-    ];
-    
-    const y = Math.random();
+  const filteredPayments =
+    date !== undefined
+      ? payments.filter((payment: Payment) => payment.date === date)
+      : payments;
 
-    const filterData = date ? data.filter(item => {
-        return item.date === date
-    }) : data
+  return new Promise<Payment[]>((resolve, reject) => {
+    setTimeout(() => {
+      if (y < 0.3) {
+        reject("Error on fetch payments data!");
+      }
 
-    return new Promise((resolve, reject) => {
-        if(y < 0.5) {
-            // reject({message: "Error on fetch data!"})
-        }       
-        resolve(filterData);
-    });
+      resolve(filteredPayments);
+    }, 1000);
+  });
 }

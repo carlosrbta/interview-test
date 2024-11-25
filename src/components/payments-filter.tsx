@@ -1,30 +1,29 @@
-import { format } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
- 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
+import { format } from "date-fns";
+import { Calendar as CalendarIcon } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
-import { useEffect, useState } from "react"
-
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
 interface Props {
-    onFilter: (date: Date | undefined) => void
+  onFilter: (date: Date | undefined) => void;
 }
 
-export function PaymentsFilter({onFilter}: Props) {
+export function PaymentsFilter({ onFilter }: Props) {
+  const [date, setDate] = useState<Date | undefined>();
 
-    const [date, setDate] = useState<Date|undefined>()
+  useEffect(() => {
+    onFilter(date);
+  }, [date, onFilter]);
 
-    useEffect(() => {
-      onFilter(date);
-    }, [date])
-
-    return <Popover>
+  return (
+    <Popover>
       <PopoverTrigger asChild>
         <Button
           variant={"outline"}
@@ -34,7 +33,7 @@ export function PaymentsFilter({onFilter}: Props) {
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? format(date, "dd-MM-yyyy") : <span>Pick a date</span>}
+          {date ? format(date, "yyyy-MM-dd") : <span>Pick a date</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0">
@@ -46,4 +45,5 @@ export function PaymentsFilter({onFilter}: Props) {
         />
       </PopoverContent>
     </Popover>
+  );
 }
