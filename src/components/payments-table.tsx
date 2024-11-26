@@ -12,7 +12,7 @@ import { format } from "date-fns";
 interface Props {
   data: Payment[];
   loading: boolean;
-  error: string;
+  error: string | null;
 }
 
 export function PaymentsTable({ data, loading, error }: Props) {
